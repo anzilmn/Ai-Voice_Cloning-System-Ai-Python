@@ -8,7 +8,7 @@ py -3.11 -m venv venv
 .\venv\Scripts\activate
 
 libraries ---
- pip install django TTS torch --extra-index-url https://download.pytorch.org/whl/cu118
+ pip install django TTS torch --extra-index-url https://download.pytorch.org/whl/cu118(will take more tym)
 
 
 
