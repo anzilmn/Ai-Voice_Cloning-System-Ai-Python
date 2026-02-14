@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Project - Voice Clone</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #121212; color: white; padding-top: 50px; }
+        .box { border: 2px solid #00ffcc; padding: 40px; border-radius: 15px; display: inline-block; background: #1e1e1e; }
+        #timer { font-size: 40px; color: #ff4b4b; margin: 20px; }
+        button { padding: 15px 30px; font-size: 18px; cursor: pointer; border-radius: 10px; border: none; font-weight: bold; }
+        #recordBtn { background: #00ffcc; color: black; }
+        #cloneBtn { background: #ff4b4b; color: white; margin-top: 20px; display: none; }
+        textarea { width: 100%; margin-top: 20px; padding: 10px; background: #333; color: white; border: 1px solid #555; }
+        .loading { color: #00ffcc; display: none; margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Voice Cloner Pro 🧬</h1>
+        <p>1. Click Record & speak for 25 seconds.</p>
+        <div id="timer">0</div>
+        <button id="recordBtn">🎤 Start Recording</button>
+
+        <div id="setup" style="display:none;">
+            <textarea id="ttsText" rows="3">Vro, this is my teacher's project and it's finally working!</textarea>
+            <button id="cloneBtn">🔥 CLONE MY VOICE</button>
+        </div>
+        <div id="loading" class="loading">AI is working... please wait...</div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        let chunks = [];
+        let recorder;
+        let audioBlob;
+
+        document.getElementById('recordBtn').onclick = async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            recorder = new MediaRecorder(stream);
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.onstop = () => {
+                audioBlob = new Blob(chunks);
+                document.getElementById('setup').style.display = 'block';
+                document.getElementById('cloneBtn').style.display = 'block';
+                stream.getTracks().forEach(s => s.stop());
+            };
+
+            recorder.start();
+            let time = 25;
+            let intv = setInterval(() => {
+                time--;
+                document.getElementById('timer').innerText = time;
+                if(time <= 0) {
+                    clearInterval(intv);
+                    recorder.stop();
+                    document.getElementById('recordBtn').disabled = true;
+                    document.getElementById('timer').innerText = "DONE!";
+                }
+            }, 1000);
+        };
+
+        document.getElementById('cloneBtn').onclick = async () => {
+            document.getElementById('loading').style.display = 'block';
+            let fd = new FormData();
+            fd.append('audio_data', audioBlob);
+            fd.append('text', document.getElementById('ttsText').value);
+            fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            let res = await fetch('', { method: 'POST', body: fd });
+            let data = await res.json();
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').innerHTML = `<audio controls src="${data.audio_url}" autoplay></audio>`;
+        };
+    </script>
+</body>
+</html>

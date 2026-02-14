@@ -1,0 +1,8 @@
+django==5.2.1
+coqui-tts==0.22.0
+torch==2.1.0
+pydub==0.25.1
+librosa==0.10.1
+scipy==1.11.3
+audioread==3.0.1
+soundfile==0.12.1

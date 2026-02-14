@@ -1,0 +1,14 @@
+🛠️ Step 1: Install FFmpeg (The Right Way for Windows)
+Since you don't want to mess with manual environment variables, do this:
+
+Open PowerShell as Administrator (Right-click PowerShell -> Run as Administrator).
+
+Run this command to install a package manager (if you don't have it):
+
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+Once that finishes, run this command:
+choco install ffmpeg -y
+
+Restart your computer. (This is mandatory so the system "sees" FFmpeg).
